@@ -41,6 +41,10 @@ app.post("/selecoes", (req, res) => {
   res.status(201).send("Seleção cadastrada com sucesso!");
 });
 
-app.delete()
+app.delete('selecoes/:id', (req, res) => {
+    let index = buscarIndexSelecao(req.params.id)
+    selecoes.splice(index, 1)
+    res.send(`Seleção com id ${req.params.id} excluída com sucesso!`)
+})
 
 export default app;
