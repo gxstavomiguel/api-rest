@@ -1,16 +1,9 @@
 import express from "express"; //const express = require('express') método otimizado para poder ser usado em outros arquivos
+import conexao from "../infra/conexao.js"
 const app = express();
 
 // para o express ler body.json
 app.use(express.json());
-
-// mock
-const selecoes = [
-  { id: 1, selecao: "Brasil", grupo: "G" },
-  { id: 2, selecao: "Suíça", grupo: "G" },
-  { id: 3, selecao: "Camarões", grupo: "G" },
-  { id: 4, selecao: "Sérvia", grupo: "G" },
-];
 
 // retornar o objeto por id
 function buscarSelecaoPorId(id) {
@@ -22,13 +15,18 @@ function buscarIndexSelecao(id) {
   return selecoes.findIndex((selecao) => selecao.id == id);
 }
 
-// rota padrão
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
-
+//Rotas
 app.get("/selecoes", (req, res) => {
-  res.status(200).send(selecoes);
+  //res.status(200).send(selecoes);
+  const sql = "SELECT * FROM selecoes;";
+  conexao.query(sql, (error, result) => {
+    if (error) {
+      console.log(error);
+      res.status(404).json({ 'error': error })
+    } else {
+      res.status(200).json(result);
+    }
+  });
 });
 
 // get de selecoes por id
@@ -65,4 +63,3 @@ app.put("/selecoes/:id", (req, res) => {
 });
 
 export default app;
-
