@@ -17,7 +17,6 @@ function buscarIndexSelecao(id) {
 
 //Rotas
 app.get("/selecoes", (req, res) => {
-  //res.status(200).send(selecoes);
   const sql = "SELECT * FROM selecoes;";
   conexao.query(sql, (error, result) => {
     if (error) {
@@ -31,11 +30,10 @@ app.get("/selecoes", (req, res) => {
 
 // get de selecoes por id
 app.get("/selecoes/:id", (req, res) => {
-  // res.json(buscarSelecaoPorId(req.params.id));
-  const id = req.params.id
+  const id = req.params.id;
   const sql = "SELECT * FROM selecoes WHERE id=?;";
   conexao.query(sql, id, (error, result) => {
-    const linha = result[0]
+    const linha = result[0];
     if (error) {
       console.log(error);
       res.status(404).json({ error: error });
@@ -46,9 +44,7 @@ app.get("/selecoes/:id", (req, res) => {
 });
 
 app.post("/selecoes", (req, res) => {
-  //selecoes.push(req.body);
-  //res.status(201).send("Seleção cadastrada com sucesso!");
-  const selecao = req.body
+  const selecao = req.body;
   const sql = "INSERT INTO selecoes SET ?;";
   conexao.query(sql, selecao, (error, result) => {
     if (error) {
@@ -62,25 +58,31 @@ app.post("/selecoes", (req, res) => {
 
 // Corrigindo a rota DELETE
 app.delete("/selecoes/:id", (req, res) => {
-  let index = buscarIndexSelecao(req.params.id);
-  if (index !== -1) {
-    selecoes.splice(index, 1);
-    res.send(`Seleção com id ${req.params.id} excluída com sucesso!`);
-  } else {
-    res.status(404).send("Seleção não encontrada");
-  }
+  const id = req.params.id;
+  const sql = "DELETE  FROM selecoes WHERE id=?;";
+  conexao.query(sql, id, (error, result) => {
+    if (error) {
+      console.log(error);
+      res.status(404).json({ error: error });
+    } else {
+      res.status(200).json(result);
+    }
+  });
 });
 
 // Corrigindo a rota PUT
 app.put("/selecoes/:id", (req, res) => {
-  let index = buscarIndexSelecao(req.params.id);
-  if (index !== -1) {
-    selecoes[index].selecao = req.body.selecao;
-    selecoes[index].grupo = req.body.grupo;
-    res.json(selecoes);
-  } else {
-    res.status(404).send("Seleção não encontrada");
-  }
+  const id = req.params.id;
+  const selecao = req.body;
+  const sql = "UPDATE selecoes SET ? WHERE id=?;";
+  conexao.query(sql, [selecao, id], (error, result) => {
+    if (error) {
+      console.log(error);
+      res.status(400).json({ error: error });
+    } else {
+      res.status(200).json(result);
+    }
+  });
 });
 
 export default app;
