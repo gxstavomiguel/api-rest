@@ -1,5 +1,5 @@
 import express from "express"; //const express = require('express') método otimizado para poder ser usado em outros arquivos
-import conexao from "../infra/conexao.js"
+import conexao from "../infra/conexao.js";
 const app = express();
 
 // para o express ler body.json
@@ -22,7 +22,7 @@ app.get("/selecoes", (req, res) => {
   conexao.query(sql, (error, result) => {
     if (error) {
       console.log(error);
-      res.status(404).json({ 'error': error })
+      res.status(404).json({ error: error });
     } else {
       res.status(200).json(result);
     }
@@ -31,12 +31,33 @@ app.get("/selecoes", (req, res) => {
 
 // get de selecoes por id
 app.get("/selecoes/:id", (req, res) => {
-  res.json(buscarSelecaoPorId(req.params.id));
+  // res.json(buscarSelecaoPorId(req.params.id));
+  const id = req.params.id
+  const sql = "SELECT * FROM selecoes WHERE id=?;";
+  conexao.query(sql, id, (error, result) => {
+    const linha = result[0]
+    if (error) {
+      console.log(error);
+      res.status(404).json({ error: error });
+    } else {
+      res.status(200).json(linha);
+    }
+  });
 });
 
 app.post("/selecoes", (req, res) => {
-  selecoes.push(req.body);
-  res.status(201).send("Seleção cadastrada com sucesso!");
+  //selecoes.push(req.body);
+  //res.status(201).send("Seleção cadastrada com sucesso!");
+  const selecao = req.body
+  const sql = "INSERT INTO selecoes SET ?;";
+  conexao.query(sql, selecao, (error, result) => {
+    if (error) {
+      console.log(error);
+      res.status(400).json({ error: error });
+    } else {
+      res.status(201).json(result);
+    }
+  });
 });
 
 // Corrigindo a rota DELETE
