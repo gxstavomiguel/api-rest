@@ -5,16 +5,6 @@ const app = express();
 // para o express ler body.json
 app.use(express.json());
 
-// retornar o objeto por id
-function buscarSelecaoPorId(id) {
-  return selecoes.filter((selecao) => selecao.id == id);
-}
-
-// pegar a posição do elemento dentro do array via id
-function buscarIndexSelecao(id) {
-  return selecoes.findIndex((selecao) => selecao.id == id);
-}
-
 //Rotas
 app.get("/selecoes", (req, res) => {
   const sql = "SELECT * FROM selecoes;";
@@ -49,7 +39,7 @@ app.post("/selecoes", (req, res) => {
   conexao.query(sql, selecao, (error, result) => {
     if (error) {
       console.log(error);
-      res.status(400).json({ error: error });
+      res.status(404).json({ error: error });
     } else {
       res.status(201).json(result);
     }
